@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
 var mongoose = require('mongoose');
+var passport = require('passport');
+var MongoStore = require('connect-mongo');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -21,6 +23,8 @@ mongoose.connect(
     console.log("connected", err ? false : true);
   }
 );
+
+require('./modules/gitAuth');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -34,11 +38,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 //session
 
 app.use(session({
-  secret: 'keyboard cat',
+  secret: process.env.secret,
   resave: false,
-  saveUninitialized: true,
-  cookie: { secure: true }
+  saveUninitialized: false,
+ store: new MongoStore({ mongooseConnections: mongoose.connection})
 }))
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
