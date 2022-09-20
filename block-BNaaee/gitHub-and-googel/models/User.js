@@ -1,11 +1,12 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt');
+var path = require('path');
 var userSchema = new Schema(
   {
-    email: { type: String, required: true, unique: true },
+    email: { type: String, unique: true },
     username: { type: String, required: true },
-    password: { type: String, required: true },
+    password: { type: String}
   },
   { timestamps: true }
 );
